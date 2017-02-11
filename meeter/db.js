@@ -9,76 +9,34 @@ var secrets = require('./secrets');
 // First we deal with a normal user of the site
 var User = new Schema({
     // username, password provided by passport plugin, so no need to put it here
-    firstName: {type: String},
-    lastName: {type: String},
-    email: {type: mongoose.SchemaTypes.Email},
-
-
-
-
-    interests: [{type: Schema.Types.ObjectId, ref:'Interest'}],
-    posts: [{type: Schema.Types.ObjectId, ref:'Post'}]
+    firstName: {type: String, required: true},
+    lastName: {type: String, required: true},
+    email: {type: mongoose.SchemaTypes.Email, required: true, unique: true, dropDups: true},
+    ambassadorID: {type: Schema.Types.ObjectId, ref:'Ambassador'},
+    bio: {type: String},
+    location: {type: String},
+    languagePreference: {type: String, required: true}
 });
 User.plugin(passportLocalMongoose);
 
+// Now we setup ambassadors, which is a subset of the active users
 
-
-
-
-
-Use password plugin
-AmbassadorID (DocumentID to an Ambassador object)
-Profile Picture (String, link to either a 3rd party hosting site, Amazon services, or a CDN. For MVP might be able to get away with just sticking it into the DB)
-Bio (String)
-Location (String)
-Preferred Language (String)
-
-Ambassador
-University (String, theoretically this should be an objectID to a location object, but we’ll just hack it together)
-University Location (String)
-Languages Spoken (List of Strings)
-Current Year in University (Number)
-Clubs they are a part of (String, should be a list of objectIDs to a Club object, but hack)
-Stripe username or whatever is required to give their card
-
-
-
-
-
-
-// A Post
-var Post = new Schema({
-    user: {type: Schema.Types.ObjectId, ref:'User'},
-    userName: {type: String},
-    title: {type: String, required: true},
-    interest: {type: Schema.Types.ObjectId, ref:'Interest'},
-    interestName: {type: String},
-    interestSlug: {type: String},
-    createdAt: {type: Date, required: true},
-    modifiedAt: {type: Date, required: true},
-    text: {type: String},
-    image: {type: String},
-    children: [{type: Schema.Types.ObjectId, ref:'Post'}]
+var Ambassador = new Schema({
+    university: {type: String, required: true}, /* Note: Technically this could be an objectID to a university, but it's alright for now*/
+    universityLocation: {type: String, required: true},
+    currentYear: {type: Number, required: true},
+    languagesSpoken: [{type: String, required: true}],
+    clubs: [{type: String}]
 });
 
-// An Interest
-var Interest = new Schema({
-    name: {type: String, required: true, unique: true, dropDups: true},
-    description: {type: String, required: true},
-    moderators: [{type: Schema.Types.ObjectId, ref:'User'}],
-    users: [{type: Schema.Types.ObjectId, ref:'User'}],
-    posts: [{type: Schema.Types.ObjectId, ref:'Post'}]
-});
-
-Post.plugin(URLSlugs('title'));
-Interest.plugin(URLSlugs('name'));
-//TODO see if we need url slugs for a user
+// URL slugs
+User.plugin(URLSlugs('username'));
 
 // "register" it so that mongoose knows about it.
 // Place after schema and before db connection
 mongoose.model('User', User);
-mongoose.model('Post', Post);
-mongoose.model('Interest', Interest);
+mongoose.model('Ambassador', Ambassador);
 
 // db connection after all schemas are registered
+console.log(secrets.dbConnectionString);
 mongoose.connect(secrets.dbConnectionString);

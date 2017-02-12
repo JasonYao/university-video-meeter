@@ -33,8 +33,8 @@ var sessionOptions = {
 app.use(session(sessionOptions));
 
 // Auth setup (via passport)
-app.use(passport.initialize());
-app.use(passport.session());
+app.use(passport.initialize());     // passport initialize middleware
+app.use(passport.session());        // passport session middleware
 
 // Makes user data available to all templates
 app.use(function(req, res, next){
@@ -53,9 +53,10 @@ app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Active routes with name-spacing
 app.use('/', index);
 app.use('/', auth);
-app.use('/users', users);
+app.use('/', users);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

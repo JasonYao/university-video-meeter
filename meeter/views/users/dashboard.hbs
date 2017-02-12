@@ -1,0 +1,13 @@
+<h1>Meeter | {{title}}</h1>
+
+<!-- Any error message -->
+{{#each errors}}
+    <div class="alert alert-{{this.alertType}} alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{this.message}}
+    </div>
+{{/each}}
+
+<p>Welcome to the dashboard</p>

@@ -7,17 +7,20 @@ var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Ambassador = mongoose.model('Ambassador');
 
+var helper = require('../helper');
 // Auth route handlers
 
 // Login page
 router.get('/login', function(req, res, next) {
+    var context = {};
+    context.errors = helper.getErrors(req.query);
+
     if (req.user) {
         // User is already logged in
-        res.redirect('/');
+        res.redirect('/dashboard');
     }
     else {
         // User has not logged in yet
-        var context = {};
         context.title = "Login";
         res.render('auth/login', context);
     }
@@ -31,14 +34,7 @@ router.post('/login', function(req,res,next) {
             });
         }
         else {
-            var context = {};
-            context.title = "Login";
-            context.errors = [{
-                type: "AuthError",
-                message: "Your login or password is incorrect.",
-                alertType: "danger"
-            }];
-            res.render('auth/login', context);
+            res.redirect("/login?errors=AuthError");
         }
     })(req, res, next);
 });
@@ -46,15 +42,11 @@ router.post('/login', function(req,res,next) {
 // Register page
 router.get('/register', function(req, res, next) {
     var context = {};
+    context.errors = helper.getErrors(req.query);
+
     if (req.user) {
         // User is already logged in, disables registration
-        context.title = "Dashboard";
-        context.errors = [{
-            type: "AuthError",
-            message: "You have already created and logged into an account.",
-            alertType: "warning"
-        }];
-        res.render('dashboard', context);
+        res.redirect("/dashboard?errors=DuplicateAuthError");
     }
     else {
         // No user is logged in yet
@@ -63,17 +55,10 @@ router.get('/register', function(req, res, next) {
     }
 });
 
-router.post('/register', function(req, res) {
-    var context = {};
+router.post('/register', function(req, res, next) {
     if (req.user) {
         // User is already logged in, just redirects to the dashboard
-        context.title = "Dashboard";
-        context.errors = [{
-            type: "AuthError",
-            message: "You have already created and logged into an account.",
-            alertType: "warning"
-        }];
-        res.render('dashboard', context);
+        res.redirect("/dashboard?errors=DuplicateAuthError");
     }
     else {
         // No user is logged in yet
@@ -84,13 +69,29 @@ router.post('/register', function(req, res) {
             username: req.body.username
         }), req.body.password, function(err, user) {
             if (err) {
+                var context = {};
                 context.title = "Register";
-                context.errors = [{
-                    type: err.name,
-                    message: err.message,
-                    alertType: "danger"
-                }];
-                res.render('auth/register', context);
+                context.errors = [];
+                // Since error handling in express is retarded, we need to singularly deal
+                // with single errors and multi errors
+                if (err.errors) {
+                    // multiple errors detected, adds them all in
+                    for (var key in err.errors) {
+                        context.errors.push({
+                            type: err.errors[key].name,
+                            message: err.errors[key].message,
+                            alertType: "warning"
+                        });
+                    }
+                }
+                else {
+                    context.errors.push({
+                        type: err.name,
+                        message: err.message,
+                        alertType: "warning"
+                    });
+                }
+                res.render("auth/register", context);
             }
             else {
                 // Deals with the case when the student is an ambassador
@@ -105,7 +106,6 @@ router.post('/register', function(req, res) {
                     passport.authenticate('local')(req, res, function() {
                         res.redirect('/dashboard');
                     });
-
                 }
             }
         });
@@ -115,17 +115,13 @@ router.post('/register', function(req, res) {
 // Ambassador register page
 router.get('/ambassador', function(req, res, next) {
     var context = {};
+    context.errors = helper.getErrors(req.query);
+
     if (req.user) {
         // User is already logged in
         if (req.user.ambassadorID) {
             // User already has created their ambassador info, redirects to the dashboard
-            context.errors = [{
-                type: "AuthError",
-                message: "You have already created your ambassador profile information.",
-                alertType: "warning"
-            }];
-            context.title = "Dashboard";
-            res.render('dashboard', context);
+            res.redirect('/dashboard?errors=AmbassadorDuplicateError');
         }
         else {
             // User has not created their ambassador ID
@@ -145,13 +141,7 @@ router.post('/ambassador', function(req, res, next) {
         // User is already logged in
         if (req.user.ambassadorID) {
             // User already has created their ambassador info, redirects to the dashboard
-            context.errors = [{
-                type: "AuthError",
-                message: "You have already created your ambassador profile information.",
-                alertType: "warning"
-            }];
-            context.title = "Dashboard";
-            res.render('dashboard', context);
+            res.redirect('/dashboard?errors=AmbassadorDuplicateError');
         }
         else {
             var ambassadorProfile = new Ambassador({
@@ -164,7 +154,7 @@ router.post('/ambassador', function(req, res, next) {
 
             ambassadorProfile.save(function (err, ambassador, count) {
                 if (err) {
-                    context.errors = [err];
+                    context.errors = [err]; // Apparently err doesn't ever give multiple in this case, so we can just wrap it
                     context.title = "Ambassador Information Registration";
                     res.render('auth/register-ambassador', context);
                 }

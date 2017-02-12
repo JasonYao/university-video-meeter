@@ -1,0 +1,23 @@
+<h1>Meeter | {{title}}</h1>
+
+<!-- Any error message -->
+{{#each errors}}
+    <div class="alert alert-{{this.alertType}} alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{this.message}}
+    </div>
+{{/each}}
+
+<!-- Email form -->
+<form method="post" action="">
+    <!-- Email -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Email:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="email" placeholder="Email" name="email">
+        </div>
+    </div>
+    <button type="submit" class="btn btn-primary">Reset Password</button>
+</form>

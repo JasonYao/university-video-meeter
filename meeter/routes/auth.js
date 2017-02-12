@@ -1,3 +1,4 @@
+"use strict";
 var express = require('express');
 var router = express.Router();
 
@@ -5,7 +6,6 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Ambassador = mongoose.model('Ambassador');
-var sanitize = require('mongo-sanitize');
 
 // Auth route handlers
 
@@ -184,12 +184,16 @@ router.post('/ambassador', function(req, res, next) {
 });
 
 // Logout page
-router.get('/logout', function(req, res){
+router.get('/logout', function(req, res, next){
     req.logout();
     res.redirect('/');
 });
 
 // Password reset page
-// TODO
+router.get('/reset', function (req, res, next) {
+    var context = {};
+    context.title = "Password Reset";
+    res.render('auth/reset', context);
+});
 
 module.exports = router;

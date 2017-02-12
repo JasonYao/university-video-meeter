@@ -5,20 +5,21 @@ var passport = require('passport');
 var mongoose = require('mongoose');
 var User = mongoose.model('User');
 var Ambassador = mongoose.model('Ambassador');
+var sanitize = require('mongo-sanitize');
 
 // Auth route handlers
 
 // Login page
 router.get('/login', function(req, res, next) {
-    if (req.user === undefined) {
+    if (req.user) {
+        // User is already logged in
+        res.redirect('/');
+    }
+    else {
         // User has not logged in yet
         var context = {};
         context.title = "Login";
         res.render('auth/login', context);
-    }
-    else {
-        // User is already logged in
-        res.redirect('/');
     }
 });
 
@@ -28,10 +29,15 @@ router.post('/login', function(req,res,next) {
             req.logIn(user, function(err) {
                 res.redirect('/dashboard');
             });
-        } else {
+        }
+        else {
             var context = {};
             context.title = "Login";
-            context.errors = ["Your login or password is incorrect."];
+            context.errors = [{
+                type: "AuthError",
+                message: "Your login or password is incorrect.",
+                alertType: "danger"
+            }];
             res.render('auth/login', context);
         }
     })(req, res, next);
@@ -39,22 +45,35 @@ router.post('/login', function(req,res,next) {
 
 // Register page
 router.get('/register', function(req, res, next) {
+    var context = {};
     if (req.user) {
         // User is already logged in, disables registration
-        res.redirect('/dashboard');
+        context.title = "Dashboard";
+        context.errors = [{
+            type: "AuthError",
+            message: "You have already created and logged into an account.",
+            alertType: "warning"
+        }];
+        res.render('dashboard', context);
     }
     else {
         // No user is logged in yet
-        var context = {};
         context.title = "Register";
         res.render('auth/register', context);
     }
 });
 
 router.post('/register', function(req, res) {
+    var context = {};
     if (req.user) {
         // User is already logged in, just redirects to the dashboard
-        res.redirect('/dashboard');
+        context.title = "Dashboard";
+        context.errors = [{
+            type: "AuthError",
+            message: "You have already created and logged into an account.",
+            alertType: "warning"
+        }];
+        res.render('dashboard', context);
     }
     else {
         // No user is logged in yet
@@ -62,11 +81,16 @@ router.post('/register', function(req, res) {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
-            username:req.body.username
+            username: req.body.username
         }), req.body.password, function(err, user) {
             if (err) {
-                // TODO add UserExistsError
-                res.render('auth/register', {message: err});
+                context.title = "Register";
+                context.errors = [{
+                    type: err.name,
+                    message: err.message,
+                    alertType: "danger"
+                }];
+                res.render('auth/register', context);
             }
             else {
                 // Deals with the case when the student is an ambassador
@@ -90,15 +114,21 @@ router.post('/register', function(req, res) {
 
 // Ambassador register page
 router.get('/ambassador', function(req, res, next) {
+    var context = {};
     if (req.user) {
         // User is already logged in
         if (req.user.ambassadorID) {
             // User already has created their ambassador info, redirects to the dashboard
-            res.redirect('/dashboard');
+            context.errors = [{
+                type: "AuthError",
+                message: "You have already created your ambassador profile information.",
+                alertType: "warning"
+            }];
+            context.title = "Dashboard";
+            res.render('dashboard', context);
         }
         else {
             // User has not created their ambassador ID
-            var context = {};
             context.title = "Ambassador Information Registration";
             res.render('auth/register-ambassador', context);
         }
@@ -110,11 +140,18 @@ router.get('/ambassador', function(req, res, next) {
 });
 
 router.post('/ambassador', function(req, res, next) {
+    var context = {};
     if (req.user) {
         // User is already logged in
         if (req.user.ambassadorID) {
             // User already has created their ambassador info, redirects to the dashboard
-            res.redirect('/dashboard');
+            context.errors = [{
+                type: "AuthError",
+                message: "You have already created your ambassador profile information.",
+                alertType: "warning"
+            }];
+            context.title = "Dashboard";
+            res.render('dashboard', context);
         }
         else {
             var ambassadorProfile = new Ambassador({
@@ -125,11 +162,10 @@ router.post('/ambassador', function(req, res, next) {
                 clubs: req.body.clubs
             });
 
-            var context = {};
-
             ambassadorProfile.save(function (err, ambassador, count) {
                 if (err) {
-                    context.message = err;
+                    context.errors = [err];
+                    context.title = "Ambassador Information Registration";
                     res.render('auth/register-ambassador', context);
                 }
                 else {

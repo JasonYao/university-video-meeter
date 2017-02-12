@@ -1,12 +1,14 @@
-
-
-
-
-
 <h1>Meeter | {{title}}</h1>
 
 <!-- Any error message -->
-{{message}}
+{{#each errors}}
+    <div class="alert alert-{{this.alertType}} alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        {{this.message}}
+    </div>
+{{/each}}
 
 <!-- Registration form -->
 <form method="post" action="">

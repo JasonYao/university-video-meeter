@@ -12,6 +12,7 @@
     "express": "~4.14.0",
     "express-session": "^1.15.1",
     "hbs": "~4.0.1",
+    "mongo-sanitize": "^1.0.0",
     "mongoose": "^4.8.2",
     "mongoose-type-email": "^1.0.3",
     "mongoose-url-slugs": "^0.2.1",

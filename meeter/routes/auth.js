@@ -30,7 +30,11 @@ router.post('/login', function(req,res,next) {
     passport.authenticate('local', function(err,user) {
         if(user) {
             req.logIn(user, function(err) {
-                res.redirect('/dashboard');
+                var nextLink = helper.getNext(req.query);
+                if (nextLink)
+                    res.redirect(nextLink);
+                else
+                    res.redirect('/dashboard');
             });
         }
         else {

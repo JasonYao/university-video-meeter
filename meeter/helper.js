@@ -48,11 +48,29 @@ function getErrors(query) {
         }
     }
     return errors;
-}
+} // End of the getErrors function
+
+// Note: we need to parse this via a function
+// because if a malicious user did ?next=something_bad,
+// it'd be bad.
+function getNext(query) {
+    if (query === undefined || query.next === undefined)
+        return undefined;
+
+    switch (query.next) {
+        case "profile":
+            return "/profile";
+        case "dashboard":
+            return "/dashboard";
+        default:
+            return undefined;
+    }
+} // End of the getNext function
 
 /**
  * Functions that are enabled to be exported for use in other files
  */
 module.exports = {
-    getErrors: getErrors
+    getErrors: getErrors,
+    getNext: getNext
 };

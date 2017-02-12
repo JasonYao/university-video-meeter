@@ -20,7 +20,22 @@ router.get('/dashboard', function(req, res, next) {
     }
     else {
         // User has not logged in yet
-        res.redirect('/login?errors=LoginRequiredError');
+        res.redirect('/login?errors=LoginRequiredError&next=dashboard');
+    }
+});
+
+// Profile page
+router.get('/profile', function(req, res, next) {
+    var context = {};
+    context.errors = helper.getErrors(req.query);
+    if (req.user) {
+        // User has already logged in
+        context.title = "Profile";
+        res.render('users/profile', context);
+    }
+    else {
+        // User has not logged in yet
+        res.redirect('/login?errors=LoginRequiredError&next=profile');
     }
 });
 

@@ -15,7 +15,7 @@ var User = new Schema({
     ambassadorID: {type: Schema.Types.ObjectId, ref:'Ambassador'},
     bio: {type: String},
     location: {type: String},
-    languagePreference: {type: String, required: true}
+    languagePreference: {type: String}
 });
 User.plugin(passportLocalMongoose);
 
@@ -38,5 +38,4 @@ mongoose.model('User', User);
 mongoose.model('Ambassador', Ambassador);
 
 // db connection after all schemas are registered
-console.log(secrets.dbConnectionString);
 mongoose.connect(secrets.dbConnectionString);

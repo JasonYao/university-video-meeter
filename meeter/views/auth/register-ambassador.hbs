@@ -1,0 +1,57 @@
+
+
+
+
+
+<h1>Meeter | {{title}}</h1>
+
+<!-- Any error message -->
+{{message}}
+
+<!-- Registration form -->
+<form method="post" action="">
+
+    <!-- University -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">University:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="University" name="university">
+        </div>
+    </div>
+
+    <!-- University Location -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">University Location:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="University Location" name="universityLocation">
+        </div>
+    </div>
+
+    <!-- Current Year -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Current Year:</label>
+        <div class="col-xs-10">
+            <select multiple class="form-control" name="currentYear">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Languages Spoken -->
+    <label><input type="checkbox" name="language[]" value="English" />English</label>
+    <label><input type="checkbox" name="language[]" value="Chinese" />Chinese</label>
+    <label><input type="checkbox" name="language[]" value="Spanish" />Spanish</label>
+
+    <!-- Clubs -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Clubs/Activities:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="Clubs/Activities" name="clubs">
+        </div>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>

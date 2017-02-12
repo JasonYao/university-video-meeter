@@ -1,0 +1,58 @@
+<h1>Meeter | {{title}}</h1>
+
+<!-- Any error message -->
+{{message}}
+
+<!-- Registration form -->
+<form method="post" action="">
+
+    <!-- Username -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Username:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="Username" name="username">
+        </div>
+    </div>
+
+    <!-- Password -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Password:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="password" placeholder="Password" name="password">
+        </div>
+    </div>
+
+    <!-- First Name -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">First Name:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="First Name" name="firstName">
+        </div>
+    </div>
+
+    <!-- Last Name -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Last Name:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="Last Name" name="lastName">
+        </div>
+    </div>
+
+    <!-- Email -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Email:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="email" placeholder="Email" name="email">
+        </div>
+    </div>
+
+    <!-- Ambassador Check -->
+    <div class="form-check">
+        <label class="form-check-label">
+            <input type="checkbox" class="form-check-input" name="isAmbassador">
+            Would you like to be a university ambassador?
+        </label>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>

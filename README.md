@@ -15,16 +15,21 @@ the student to make more of an informed decision
 regarding which university they choose to attend.
 
 For the current university students, it allows
-them a way to form mentorship relationships
-with future students at their university,
-enriching the time they have left at university
-by building friendships and relationships
-past graduation.
+them the ability to connect with future students
+at their university, and be paid for their time
+spent educating.
 
 For us, the developers, it allows us to showcase
 our full-stack knowledge, and build out a cool,
 full web app using as many of the latest technologies
 as we could fit into it.
+
+## APIs & Main Technologies
+- Node + Express
+- [MongoDB](https://www.mongodb.com/) + [Mongoose](http://mongoosejs.com/)
+- [AWS S3](https://aws.amazon.com/s3/) integration (profile image hosting)
+- [WebRTC](http://socket.io/blog/socket-io-p2p/#) (P2P real-time video chat)
+- [Socket.io](http://socket.io/) (Signaling of metadate and information, and fallback if WebRTC is unavailable)
 
 ## Tech Stack (metal up)
 OS:                   Ubuntu 16.04 LTS VPS (AWS)

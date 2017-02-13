@@ -1,0 +1,81 @@
+<h1>Meeter | {{title}}</h1>
+
+<!-- Content -->
+<div class="row row-offcanvas row-offcanvas-right">
+
+
+    <!-- Settings -->
+    <div class="col-12 col-md-9">
+
+        <!-- Settings nav toggler -->
+        <p class="float-left hidden-md-up">
+            <button type="button" class="btn btn-primary btn-sm" data-toggle="offcanvas">Toggle nav</button>
+        </p>
+
+        <!-- Settings content -->
+        <div class="jumbotron">
+            <h1>Hey there {{user.username}}!</h1>
+            <p>This is your settings page, where you can edit your account details as you'd like.</p>
+        </div>
+        <div class="row">
+            <form method="post" action="">
+                <div class="col-6 col-lg-4">
+                    <h2>Profile Photo</h2>
+                    <img src="/img/{{user.username}}/{{user.photoExtension}}" class="rounded-circle img-thumbnail" height="100px" width="100px" alt="My profile picture">
+
+                    <label class="custom-file">
+                        <input type="file" id="photo" class="custom-file-input">
+                        <span class="custom-file-control">Edit Photo</span>
+                    </label>
+                </div><!--/span-->
+
+            </form>
+
+            <div class="col-6 col-lg-4">
+                <h2>Heading</h2>
+                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+            </div><!--/span-->
+
+            <div class="col-6 col-lg-4">
+                <h2>Heading</h2>
+                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+            </div><!--/span-->
+
+            <div class="col-6 col-lg-4">
+                <h2>Heading</h2>
+                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+            </div><!--/span-->
+
+            <div class="col-6 col-lg-4">
+                <h2>Heading</h2>
+                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+            </div><!--/span-->
+
+            <div class="col-6 col-lg-4">
+                <h2>Heading</h2>
+                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
+                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
+            </div><!--/span-->
+
+
+        </div><!--/row-->
+
+
+    </div><!-- end settings-->
+
+
+    <!-- Sidebar -->
+    <div class="col-6 col-md-3 sidebar-offcanvas" id="sidebar">
+        <div class="list-group">
+            <a href="/settings/profile" class="list-group-item active">Profile</a>
+            <a href="/settings/balance" class="list-group-item">Banks & cards</a>
+            <a href="/settings/notifications" class="list-group-item">Notifications</a>
+            <a href="/settings/privacy" class="list-group-item">Privacy</a>
+            <a href="/settings/security" class="list-group-item">Security</a>
+        </div>
+    </div>
+</div>

@@ -62,6 +62,12 @@ function getNext(query) {
             return "/profile";
         case "dashboard":
             return "/dashboard";
+        case "settings":
+            return "/settings";
+        case "ambassador":
+            return "/ambassador";
+        case "optional":
+            return "/optional";
         default:
             return undefined;
     }

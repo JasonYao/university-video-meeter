@@ -39,4 +39,21 @@ router.get('/profile', function(req, res, next) {
     }
 });
 
+// Settings page
+router.get('/settings', function(req, res, next) {
+    var context = {};
+    context.errors = helper.getErrors(req.query);
+    if (req.user) {
+        // User has already logged in
+        context.title = "Settings";
+        context.css = ["offcanvas.css"];
+        context.js = ["offcanvas.js"];
+        res.render('users/settings', context);
+    }
+    else {
+        // User has not logged in yet
+        res.redirect('/login?errors=LoginRequiredError&next=settings');
+    }
+});
+
 module.exports = router;

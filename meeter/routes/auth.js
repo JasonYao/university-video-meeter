@@ -102,78 +102,17 @@ router.post('/register', function(req, res, next) {
                 if (req.body.isAmbassador) {
                     // Moves the user to the ambassador info page
                     passport.authenticate('local')(req, res, function() {
-                        res.redirect('/ambassador');
+                        res.redirect('/optional?next=ambassador');
                     });
                 }
                 else {
                     // Not an ambassador, so just logs the user into the dashboard
                     passport.authenticate('local')(req, res, function() {
-                        res.redirect('/dashboard');
+                        res.redirect('/optional');
                     });
                 }
             }
         });
-    }
-});
-
-// Ambassador register page
-router.get('/ambassador', function(req, res, next) {
-    var context = {};
-    context.errors = helper.getErrors(req.query);
-
-    if (req.user) {
-        // User is already logged in
-        if (req.user.ambassadorID) {
-            // User already has created their ambassador info, redirects to the dashboard
-            res.redirect('/dashboard?errors=AmbassadorDuplicateError');
-        }
-        else {
-            // User has not created their ambassador ID
-            context.title = "Ambassador Information Registration";
-            res.render('auth/register-ambassador', context);
-        }
-    }
-    else {
-        // User is not logged in, just redirects to the login page
-        res.redirect('/login');
-    }
-});
-
-router.post('/ambassador', function(req, res, next) {
-    var context = {};
-    if (req.user) {
-        // User is already logged in
-        if (req.user.ambassadorID) {
-            // User already has created their ambassador info, redirects to the dashboard
-            res.redirect('/dashboard?errors=AmbassadorDuplicateError');
-        }
-        else {
-            var ambassadorProfile = new Ambassador({
-                university: req.body.university,
-                universityLocation: req.body.universityLocation,
-                currentYear: req.body.currentYear,
-                languagesSpoken: req.body.languagesSpoken,
-                clubs: req.body.clubs
-            });
-
-            ambassadorProfile.save(function (err, ambassador, count) {
-                if (err) {
-                    context.errors = [err]; // Apparently err doesn't ever give multiple in this case, so we can just wrap it
-                    context.title = "Ambassador Information Registration";
-                    res.render('auth/register-ambassador', context);
-                }
-                else {
-                    // Updates the user's ambassador profile
-                    User.update({username: req.user.username}, {$set: {'ambassadorID': ambassadorProfile.id}}, {upsert:true}, function(err, data) {
-                        res.redirect('/dashboard');
-                    });
-                }
-            });
-        }
-    }
-    else {
-        // User is not logged in, just redirects to the login page
-        res.redirect('/login');
     }
 });
 

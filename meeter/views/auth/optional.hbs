@@ -1,0 +1,46 @@
+<h1>Meeter | {{title}}</h1>
+
+<!-- Optional profile information form -->
+<form method="post" action="" enctype="multipart/form-data">
+    <!-- Bio -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Bio:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="Bio" name="bio">
+        </div>
+    </div>
+
+    <!-- Location -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Location:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="Location" name="location">
+        </div>
+    </div>
+
+    <!-- Language Preference -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Language Preference:</label>
+        <div class="col-xs-10">
+            <input class="form-control" type="text" placeholder="Language Preference" name="languagePreference">
+        </div>
+    </div>
+
+    <!-- Photo -->
+    <div class="form-group row">
+        <label class="col-xs-2 col-form-label">Profile Photo:</label>
+        <img src="{{user.photo}}" class="rounded-circle img-thumbnail" height="100px" width="100px" alt="My profile picture">
+        <div class="custom-file col-xs-10">
+            <input class="custom-file-input" type="file" name="photo">
+            <span class="custom-file-control">Edit Photo</span>
+        </div>
+    </div><!--/span-->
+
+    <button type="submit" class="btn btn-primary">Submit</button>
+</form>
+
+<!-- Skip button for form -->
+<form method="post" action="">
+    <input type="hidden" name="skip" value="true">
+    <button type="submit" class="btn btn-primary">Skip</button>
+</form>

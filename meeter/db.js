@@ -16,7 +16,8 @@ var User = new Schema({
     ambassadorID: {type: Schema.Types.ObjectId, ref:'Ambassador'},
     bio: {type: String},
     location: {type: String},
-    languagePreference: {type: String}
+    languagePreference: {type: String},
+    photo: {type: String} /* We store the images in S3, and just save the link to the image here */
 });
 User.plugin(passportLocalMongoose);
 

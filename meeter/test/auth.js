@@ -10,7 +10,7 @@ var helper = require('./helper');
 // Login testing
 describe('Authentication: Login', function() {
     // Show login page
-    helper.testGetRoute('/login', 'Login');
+    helper.testGetRoute('/login', 'Login', app);
 
     // Should refuse empty submissions
     describe('Refuse empty submissions', function() {
@@ -128,7 +128,7 @@ describe('Authentication: Login', function() {
 // Registration testing
 describe('Authentication: Registration', function() {
     // Show registration page
-    helper.testGetRoute('/register', 'Registration');
+    helper.testGetRoute('/register', 'Registration', app);
 
     // Should refuse empty submissions TODO
 
@@ -149,7 +149,7 @@ describe('Authentication: Logout', function() {
 // Password reset testing
 describe('Authentication: Password Reset', function() {
     // Should show reset page
-    helper.testGetRoute('/reset', 'Password Reset');
+    helper.testGetRoute('/reset', 'Password Reset', app);
 
     // TODO
 });

@@ -17,6 +17,7 @@ var User = new Schema({
     bio: {type: String},
     location: {type: String},
     languagePreference: {type: String},
+    isAmbassador: {type: Boolean}, /* NOTE: We can't just depend on undefined ambassadorID */
     photo: {type: String} /* We store the images in S3, and just save the link to the image here */
 });
 User.plugin(passportLocalMongoose);

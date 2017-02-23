@@ -19,54 +19,93 @@
         </div>
         <div class="row">
             <form method="post" action="">
+                <!-- Photo -->
                 <div class="col-6 col-lg-4">
-                    <h2>Profile Photo</h2>
-                    <img src="/img/{{user.username}}/{{user.photoExtension}}" class="rounded-circle img-thumbnail" height="100px" width="100px" alt="My profile picture">
-
-                    <label class="custom-file">
-                        <input type="file" id="photo" class="custom-file-input">
+                    <label class="col-xs-2 col-form-label">Profile Photo:</label>
+                    <img src="{{user.photo}}" class="rounded-circle img-thumbnail" height="100px" width="100px" alt="My profile picture">
+                    <div class="custom-file col-xs-10">
+                        <input class="custom-file-input" type="file" name="photo">
                         <span class="custom-file-control">Edit Photo</span>
-                    </label>
-                </div><!--/span-->
+                    </div>
+                </div>
 
+                <!-- Username -->
+                <div class="col-6 col-lg-4">
+                    <label class="col-xs-2 col-form-label">Username:</label>
+                    <div class="col-xs-10">
+                        <input class="form-control" type="text" placeholder="Username" name="username" value="{{user.username}}">
+                    </div>
+                </div>
+
+                <!-- First Name -->
+                <div class="col-6 col-lg-4">
+                    <label class="col-xs-2 col-form-label">First Name:</label>
+                    <div class="col-xs-10">
+                        <input class="form-control" type="text" placeholder="First Name" name="firstName" value="{{user.firstName}}">
+                    </div>
+                </div>
+
+                <!-- Last Name -->
+                <div class="col-6 col-lg-4">
+                    <label class="col-xs-2 col-form-label">Last Name:</label>
+                    <div class="col-xs-10">
+                        <input class="form-control" type="text" placeholder="Last Name" name="lastName" value="{{user.lastName}}">
+                    </div>
+                </div>
+
+                <!-- Email -->
+                <div class="col-6 col-lg-4">
+                    <label class="col-xs-2 col-form-label">Email:</label>
+                    <div class="col-xs-10">
+                        <input class="form-control" type="email" placeholder="Email" name="email" value="{{user.email}}">
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="col-6 col-lg-4">
+                    <a href="/reset">Change Password</a>
+                </div>
+
+                <!-- Ambassador Check -->
+                <div class="col-6 col-lg-4 form-check">
+                    <label class="form-check-label">
+                        Would you like to be a university ambassador?
+                        {{#if user.ambassadorID}}
+                            <input type="checkbox" class="form-check-input" name="isAmbassador">
+                        {{else}}
+                            <input type="checkbox" class="form-check-input" name="isAmbassador" checked="checked">
+                        {{/if}}
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary">Submit</button>
             </form>
 
-            <div class="col-6 col-lg-4">
-                <h2>Heading</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-            </div><!--/span-->
+            <!-- Bio -->
+            <div class="form-group row">
+                <label class="col-xs-2 col-form-label">Bio:</label>
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" placeholder="Bio" name="bio" value="{{user.bio}}">
+                </div>
+            </div>
 
-            <div class="col-6 col-lg-4">
-                <h2>Heading</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-            </div><!--/span-->
+            <!-- Location -->
+            <div class="form-group row">
+                <label class="col-xs-2 col-form-label">Location:</label>
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" placeholder="Location" name="location" value="{{user.location}}">
+                </div>
+            </div>
 
-            <div class="col-6 col-lg-4">
-                <h2>Heading</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-            </div><!--/span-->
-
-            <div class="col-6 col-lg-4">
-                <h2>Heading</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-            </div><!--/span-->
-
-            <div class="col-6 col-lg-4">
-                <h2>Heading</h2>
-                <p>Donec id elit non mi porta gravida at eget metus. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus. Etiam porta sem malesuada magna mollis euismod. Donec sed odio dui. </p>
-                <p><a class="btn btn-secondary" href="#" role="button">View details &raquo;</a></p>
-            </div><!--/span-->
-
-
+            <!-- Language Preference -->
+            <div class="form-group row">
+                <label class="col-xs-2 col-form-label">Language Preference:</label>
+                <div class="col-xs-10">
+                    <input class="form-control" type="text" placeholder="Language Preference" name="languagePreference" value="{{user.languagePreference}}">
+                </div>
+            </div>
         </div><!--/row-->
-
-
     </div><!-- end settings-->
-
 
     <!-- Sidebar -->
     <div class="col-6 col-md-3 sidebar-offcanvas" id="sidebar">

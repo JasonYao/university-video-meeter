@@ -40,7 +40,13 @@ Database:             MongoDB
 ODM:                  Mongoose
 
 ## Testing
-TODO
+Testing uses the [mocha](https://mochajs.org/) framework,
+and should be installed as a dev dependency if it's not
+already installed on your machine.
+
+```sh
+npm test
+```
 
 ## Linting
 We use jshint, and have the config files already setup.

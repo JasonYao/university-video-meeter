@@ -12,48 +12,81 @@ var helper = require('../helper');
 
 // Login page
 router.get('/login', function(req, res, next) {
-    var context = {};
-    context.errors = helper.getErrors(req.query);
-
     if (req.user) {
         // User is already logged in
-        res.redirect('/dashboard');
+        req.flash("info", "You've already logged in!");
+        var nextLink = helper.getNext(req.query);
+        if (nextLink)
+            res.redirect(nextLink);
+        else
+            res.redirect('/dashboard');
     }
     else {
         // User has not logged in yet
+        var context = {};
+        context.messages = helper.getFlashMessages(req);
         context.title = "Login";
         res.render('auth/login', context);
     }
 });
 
 router.post('/login', function(req,res,next) {
-    passport.authenticate('local', function(err,user) {
-        if(user) {
-            req.logIn(user, function(err) {
-                var nextLink = helper.getNext(req.query);
-                if (nextLink)
-                    res.redirect(nextLink);
-                else
-                    res.redirect('/dashboard');
-            });
-        }
-        else {
-            res.redirect("/login?errors=AuthError");
-        }
-    })(req, res, next);
+    if(req.user) {
+        // User has already logged in, just redirects to the dashboard
+        req.flash("info", "You've already logged in!");
+        var nextLink = helper.getNext(req.query);
+        if (nextLink)
+            res.redirect(nextLink);
+        else
+            res.redirect('/dashboard');
+    }
+    else {
+        // User has not logged in yet, so attempts login
+        var context = {};
+        context.title = "Login";
+
+        passport.authenticate('local', function(err, user) {
+            if (err) {
+                // Login somehow catastrophically failed
+                req.flash("danger", err.message);
+                context.messages = helper.getFlashMessages(req);
+                context.username = req.body.username;
+                res.render('auth/login', context);
+            }
+            else if (!user) {
+                // User's login information was incorrect
+                req.flash("danger", "Your username/password combination was incorrect.");
+                context.messages = helper.getFlashMessages(req);
+                context.username = req.body.username;
+                res.render('auth/login', context);
+            }
+            else {
+                // No errors, runs through login procedure
+                req.logIn(user, function(err) {
+                    if (err) { return next(err); }
+
+                    var nextLink = helper.getNext(req.query);
+                    if (nextLink)
+                        res.redirect(nextLink);
+                    else
+                        res.redirect('/dashboard');
+                });
+            }
+        })(req, res, next);
+    }
 });
 
 // Register page
 router.get('/register', function(req, res, next) {
-    var context = {};
-    context.errors = helper.getErrors(req.query);
-
     if (req.user) {
         // User is already logged in, disables registration
-        res.redirect("/dashboard?errors=DuplicateAuthError");
+        req.flash("info", "You've already logged in!");
+        res.redirect("/dashboard");
     }
     else {
         // No user is logged in yet
+        var context = {};
+        context.messages = helper.getFlashMessages(req);
         context.title = "Register";
         res.render('auth/register', context);
     }
@@ -62,7 +95,8 @@ router.get('/register', function(req, res, next) {
 router.post('/register', function(req, res, next) {
     if (req.user) {
         // User is already logged in, just redirects to the dashboard
-        res.redirect("/dashboard?errors=DuplicateAuthError");
+        req.flash("info", "You've already logged in!");
+        res.redirect("/dashboard");
     }
     else {
         // No user is logged in yet
@@ -70,47 +104,21 @@ router.post('/register', function(req, res, next) {
             firstName: req.body.firstName,
             lastName: req.body.lastName,
             email: req.body.email,
-            username: req.body.username
+            username: req.body.username,
+            isAmbassador: req.body.isAmbassador !== undefined
         }), req.body.password, function(err, user) {
             if (err) {
                 var context = {};
                 context.title = "Register";
-                context.errors = [];
-                // Since error handling in express is retarded, we need to singularly deal
-                // with single errors and multi errors
-                if (err.errors) {
-                    // multiple errors detected, adds them all in
-                    for (var key in err.errors) {
-                        context.errors.push({
-                            type: err.errors[key].name,
-                            message: err.errors[key].message,
-                            alertType: "warning"
-                        });
-                    }
-                }
-                else {
-                    context.errors.push({
-                        type: err.name,
-                        message: err.message,
-                        alertType: "warning"
-                    });
-                }
+                req.flash("danger", err.message);
+                context.messages = helper.getFlashMessages(req);
                 res.render("auth/register", context);
             }
             else {
-                // Deals with the case when the student is an ambassador
-                if (req.body.isAmbassador) {
-                    // Moves the user to the ambassador info page
-                    passport.authenticate('local')(req, res, function() {
-                        res.redirect('/optional?next=ambassador');
-                    });
-                }
-                else {
-                    // Not an ambassador, so just logs the user into the dashboard
-                    passport.authenticate('local')(req, res, function() {
-                        res.redirect('/optional');
-                    });
-                }
+                passport.authenticate('local')(req, res, function() {
+                    req.flash("success", "Your account has successfully been created!");
+                    res.redirect('/optional');
+                });
             }
         });
     }
@@ -125,6 +133,7 @@ router.get('/logout', function(req, res, next){
 // Password reset page
 router.get('/reset', function (req, res, next) {
     var context = {};
+    context.messages = helper.getFlashMessages(req);
     context.title = "Password Reset";
     res.render('auth/reset', context);
 });

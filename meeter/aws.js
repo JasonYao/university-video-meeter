@@ -12,6 +12,10 @@ AWS.config.update({
 
 // This function should return the URL of the uploaded image
 function uploadToS3(file, callback) {
+    // Sanity check
+    if (file === undefined)
+        return callback(new Error("There was an error uploading your file, please try again"));
+
     var s3Object = {};
     var fileName = file.filename;
 

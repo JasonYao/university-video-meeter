@@ -5,6 +5,7 @@ var favicon = require('serve-favicon');
 var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var flash = require('connect-flash');
 
 // Auth and db requirements
 var passport = require('passport');
@@ -13,7 +14,7 @@ require('./auth');
 var secrets = require('./secrets');
 
 // Routes
-var index = require('./routes/index');
+var global = require('./routes/global');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
 var info = require('./routes/info');
@@ -32,6 +33,7 @@ var sessionOptions = {
     saveUninitialized: true
 };
 app.use(session(sessionOptions));
+app.use(flash());
 
 // Auth setup (via passport)
 app.use(passport.initialize());     // passport initialize middleware
@@ -49,13 +51,13 @@ app.use(function(req, res, next){
 
 // Middleware
 app.use(logger('dev'));
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json({limit: '4mb'}));
+app.use(bodyParser.urlencoded({ extended: true, limit: '4mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Active routes with name-spacing
-app.use('/', index);
+app.use('/', global);
 app.use('/', auth);
 app.use('/', users);
 app.use('/', info);

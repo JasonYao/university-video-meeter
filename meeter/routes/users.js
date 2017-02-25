@@ -16,6 +16,7 @@ router.get('/dashboard', function(req, res, next) {
         var context = {};
         context.messages = helper.getFlashMessages(req);
         context.title = "Dashboard";
+        context.active = { dashboard: true };
         res.render('users/dashboard', context);
     }
     else {
@@ -32,6 +33,7 @@ router.get('/profile', function(req, res, next) {
         var context = {};
         context.messages = helper.getFlashMessages(req);
         context.title = "Profile";
+        context.active = { profile: true };
         res.render('users/profile', context);
     }
     else {
@@ -48,6 +50,7 @@ router.get('/settings', function(req, res, next) {
         var context = {};
         context.messages = helper.getFlashMessages(req);
         context.title = "Settings";
+        context.active = { settings: true };
         context.css = ["offcanvas.css"];
         context.js = ["offcanvas.js"];
         res.render('users/settings', context);
@@ -81,6 +84,7 @@ router.post('/settings', function (req, res, next) {
                 req.flash('danger', err.message);
                 context.messages = helper.getFlashMessages(req);
                 context.title = "Settings";
+                context.active = { settings: true };
                 context.css = ["offcanvas.css"];
                 context.js = ["offcanvas.js"];
 

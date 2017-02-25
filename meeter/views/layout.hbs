@@ -20,40 +20,41 @@
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="#">Navbar</a>
+        <a class="navbar-brand" href="/">Meeter</a>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="#">Link</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link disabled" href="#">Disabled</a>
-                </li>
+            <ul class="navbar-nav msr-auto">
+
+                <!-- About -->
+                <li class="nav-item{{#if active.about}} active{{/if}}"><a class="nav-link" href="/about/">About</a></li>
+
+                <!-- Chat -->
+                <li class="nav-item{{#if active.chat}} active{{/if}}"><a class="nav-link" href="/chat/">Chat</a></li>
+
+                <!-- Universities -->
+                <li class="nav-item{{#if active.universities}} active{{/if}}"><a class="nav-link" href="/universities/">Universities</a></li>
+
+                <!-- Help -->
+                <li class="nav-item{{#if active.help}} active{{/if}}"><a class="nav-link" href="/help/">Help</a></li>
 
                 {{#if user}}
-                    <li><a class="nav-link" href="/dashboard/">Dashboard</a></li>
-                    <li><a class="nav-link" href="/schedule/">Schedule</a></li>
-                    <li><a class="nav-link" href="/search/">Search</a></li>
+                    <!-- Dashboard -->
+                    <li class="nav-item{{#if active.dashboard}} active{{/if}}"><a class="nav-link" href="/dashboard/">Dashboard</a></li>
+
+                    <!-- Schedule -->
+                    <li class="nav-item{{#if active.schedule}} active{{/if}}"><a class="nav-link" href="/schedule/">Schedule</a></li>
+
+                    <!-- Search -->
+                    <li class="nav-item{{#if active.search}} active{{/if}}"><a class="nav-link" href="/search/">Search</a></li>
                 {{else}}
-                    <!-- Default Links -->
-                    <li><a class="nav-link" href="/is/">Product</a></li>
-                    <li><a class="nav-link" href="/universities/">Universities</a></li>
-                    <li><a class="nav-link" href="/help/">Help</a></li>
+                    <!-- Pricing -->
+                    <li class="nav-item{{#if active.pricing}} active{{/if}}"><a class="nav-link" href="/pricing/">Pricing</a></li>
 
                     <!-- User login/registration -->
-                    <li><a class="nav-link" href="/login/">Login</a></li>
-                    <li><a class="nav-link" href="/register/">Register</a></li>
-
+                    <li class="nav-item{{#if active.login}} active{{/if}}"><a class="nav-link" href="/login/">Login</a></li>
+                    <li class="nav-item{{#if active.register}} active{{/if}}"><a class="nav-link" href="/register/">Register</a></li>
                 {{/if}}
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="text" placeholder="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
-            </form>
         </div>
     </nav>
 

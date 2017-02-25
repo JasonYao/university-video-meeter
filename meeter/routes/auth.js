@@ -26,6 +26,7 @@ router.get('/login', function(req, res, next) {
         var context = {};
         context.messages = helper.getFlashMessages(req);
         context.title = "Login";
+        context.active = { login: true };
         res.render('auth/login', context);
     }
 });
@@ -44,6 +45,7 @@ router.post('/login', function(req,res,next) {
         // User has not logged in yet, so attempts login
         var context = {};
         context.title = "Login";
+        context.active = { login: true };
 
         passport.authenticate('local', function(err, user) {
             if (err) {
@@ -88,6 +90,7 @@ router.get('/register', function(req, res, next) {
         var context = {};
         context.messages = helper.getFlashMessages(req);
         context.title = "Register";
+        context.active = { register: true };
         res.render('auth/register', context);
     }
 });
@@ -110,6 +113,7 @@ router.post('/register', function(req, res, next) {
             if (err) {
                 var context = {};
                 context.title = "Register";
+                context.active = { register: true };
                 req.flash("danger", err.message);
                 context.messages = helper.getFlashMessages(req);
                 res.render("auth/register", context);

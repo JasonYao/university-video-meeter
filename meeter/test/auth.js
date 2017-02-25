@@ -70,8 +70,8 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"))
-                    assert(res.text.includes("value=\"testing\""))
+                    assert(res.text.includes("alert-danger"));
+                    assert(res.text.includes("value=\"testing\""));
                 });
         });
     });
@@ -86,8 +86,8 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"))
-                    assert(res.text.includes("value=\"testing\""))
+                    assert(res.text.includes("alert-danger"));
+                    assert(res.text.includes("value=\"testing\""));
                 });
         });
     });
@@ -102,8 +102,8 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"))
-                    assert(res.text.includes("value=\"testing\""))
+                    assert(res.text.includes("alert-danger"));
+                    assert(res.text.includes("value=\"testing\""));
                 });
         });
     });

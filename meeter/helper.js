@@ -18,6 +18,12 @@ function getNext(query) {
             return "/ambassador";
         case "optional":
             return "/optional";
+        case "chat":
+            return "/chat";
+        case "search":
+            return "/search";
+        case "schedule":
+            return "/schedule";
         default:
             return undefined;
     }

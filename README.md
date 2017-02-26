@@ -1,5 +1,5 @@
-# University Video Web App (Name to be added later)
-By Jason Yao & Arvind Ramgopal
+# Meeter (University Video Web App)
+By [Jason Yao](https://github.com/JasonYao) & [Arvind Ramgopal](https://github.com/arvind001)
 
 ## Description
 This is a web application that will allow students
@@ -26,31 +26,52 @@ as we could fit into it.
 
 ## APIs & Main Technologies
 - Node + Express
-- [MongoDB](https://www.mongodb.com/) + [Mongoose](http://mongoosejs.com/)
-- [AWS S3](https://aws.amazon.com/s3/) integration (profile image hosting)
-- [WebRTC](http://socket.io/blog/socket-io-p2p/#) (P2P real-time video chat)
-- [Socket.io](http://socket.io/) (Signaling of metadate and information, and fallback if WebRTC is unavailable)
+- [MongoDB](https://www.mongodb.com/) (NoSQL DB) + [Mongoose](http://mongoosejs.com/) (ODM)
+- [Gulp](http://gulpjs.com/) (Automated image resizing + minification)
+- [AWS S3 integration](https://aws.amazon.com/s3/) (profile image hosting)
+- [WebRTC](https://webrtc.org/) via [simple-peer](https://github.com/feross/simple-peer)* (P2P real-time video, chat, and calling)
+- [Socket.io](http://socket.io/) (Signaling of metadata and information, and fallback if WebRTC is unavailable)
 
-## Tech Stack (metal up)
-OS:                   Ubuntu 16.04 LTS VPS (AWS)
-LB:                   No load balancing/autoscaling (proof of concept app, will only add this in the minute event of getting lots of users)
-Reverse Proxy Server: Nginx
-Node Process Manager: PM2
-Database:             MongoDB
-ODM:                  Mongoose
+
+\* Note: While socket.io has a [P2P library](https://github.com/socketio/socket.io-p2p),
+its current state leaves it unable to do the one
+task that it was designed for: P2P communication.
+Because of this, alternative WebRTC libraries will
+have to be used unless socket.io dedicates more
+resources to P2P needs.
+
+## Setup
+- Download the repo
+
+```sh
+cd meeter
+npm install
+npm run build
+nodemon bin/www
+```
 
 ## Testing
 Testing uses the [mocha](https://mochajs.org/) framework,
 and should be installed as a dev dependency if it's not
-already installed on your machine.
+already installed on your machine. Run from the `meeter` directory:
 
 ```sh
 npm test
 ```
 
 ## Linting
-We use jshint, and have the config files already setup.
-Simply run from the root directory:
+We use [jshint](http://jshint.com/), and have the config files already setup.
+Simply run from the `meeter` directory:
 ```sh
-jshint meeter
+npm run lint
+```
+
+## Tech Stack (metal up)
+```
+OS:                   Ubuntu 16.04 LTS VPS (AWS)
+LB:                   No load balancing/autoscaling (proof of concept app, will only add this in the minute event of getting lots of users)
+Reverse Proxy Server: Nginx
+Node Process Manager: PM2
+Database:             MongoDB
+ODM:                  Mongoose
 ```

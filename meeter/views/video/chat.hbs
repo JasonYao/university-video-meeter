@@ -1,2 +1,23 @@
 <h1>Meeteer | {{title}}</h1>
 <p>Welcome to the chat page</p>
+
+<ul id="messages">
+
+</ul>
+
+<form id="message_form" action="">
+    <input id="m" autocomplete="off" placeholder="Your secure message"/><button id="send_message_button">Send</button>
+</form>
+
+<div class="status-box">
+    Connection status:
+    <div id="status">
+
+    </div>
+    <button id="private" disabled="true">Go private</button>
+</div>
+
+
+<!-- <script src="https://cdn.socket.io/socket.io-1.4.5.js" integrity="sha384-VuaAWNnQgB7xk5ihc55oGtvAdFQP/mJ6bjNoS0Jj7hujhoKnKcPMEJrwC3bLbEP0" crossorigin="anonymous"></script>
+This is technically the correct cdn, but socket.io is down for now.
+-->

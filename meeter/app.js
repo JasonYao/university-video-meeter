@@ -13,14 +13,21 @@ require('./db');
 require('./auth');
 var secrets = require('./secrets');
 
+var app = express();
+
+// Socket.io setup
+var socketIO = require('socket.io');
+var io = socketIO();
+app.io = io;
+var p2p = require('socket.io-p2p-server').Server;
+app.p2p = p2p;
+
 // Routes
 var global = require('./routes/global');
 var users = require('./routes/users');
 var auth = require('./routes/auth');
 var info = require('./routes/info');
-var video = require('./routes/video');
-
-var app = express();
+var video = require('./routes/video')(io);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));

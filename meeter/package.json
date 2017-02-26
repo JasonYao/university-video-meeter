@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "start": "node ./bin/www",
-    "test": "mocha"
+    "test": "mocha",
+    "build": "browserify public/js/main*.js -o public/js/bundle.js"
   },
   "dependencies": {
     "aws-sdk": "^2.12.0",
@@ -23,9 +24,14 @@
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "passport-local-mongoose": "^4.0.0",
-    "serve-favicon": "~2.3.0"
+    "serve-favicon": "~2.3.0",
+    "socket.io": "^1.7.3",
+    "socket.io-client": "^1.7.3",
+    "socket.io-p2p": "^2.2.0",
+    "socket.io-p2p-server": "^1.2.0"
   },
   "devDependencies": {
+    "browserify": "^14.1.0",
     "mocha": "^3.2.0",
     "supertest": "^3.0.0"
   }

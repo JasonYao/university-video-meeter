@@ -21,6 +21,13 @@ app.set('port', port);
 
 var server = http.createServer(app);
 
+// Socket.io stuff
+var io = app.io;
+io.attach(server);
+
+var p2p = require('socket.io-p2p-server').Server;
+io.use(p2p);
+
 /**
  * Listen on provided port, on all network interfaces.
  */

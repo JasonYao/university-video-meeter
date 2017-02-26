@@ -18,6 +18,10 @@ router.get('/chat', function(req, res, next) {
         context.messages = helper.getFlashMessages(req);
         context.title = "Chat";
         context.active = { chat: true };
+
+        context.js = ["bundle.js"];
+        context.css = ["socket.css"];
+
         res.render('video/chat', context);
     }
     else {
@@ -61,4 +65,64 @@ router.get('/search', function(req, res, next) {
     }
 });
 
-module.exports = router;
+module.exports = function(io) {
+    //
+    // io.on('connection', function (socket) {
+    //     console.log("A user has connected to the server");
+    //
+    //     socket.on('peer-msg', function (data) {
+    //         console.log('Message from peer: %s', data);
+    //         socket.broadcast.emit('peer-msg', data);
+    //     });
+    //
+    //     socket.on('peer-file', function (data) {
+    //         console.log('File from peer: %s', data);
+    //         socket.broadcast.emit('peer-file', data);
+    //     });
+    //
+    //     socket.on('go-private', function (data) {
+    //         console.log("A user is going private");
+    //         socket.broadcast.emit('go-private', data);
+    //     });
+    // });
+    //
+    // io.on('go-private', function (data) {
+    //     console.log("A user is going private 2");
+    //     socket.broadcast.emit('go-private', data);
+    // });
+    //
+    // io.on('disconnect', function (socket) {
+    //     console.log("A user has disconnected from the server");
+    // });
+
+    // namespaced
+    var room = io.of('/university_chat');
+    room.on('connection', function (socket) {
+        console.log("A user has connected to room 1");
+
+        socket.on('upgrade', function (data) {
+            console.log("A user is upgrading");
+            socket.broadcast.emit('upgrade', data);
+        });
+
+        socket.on('peer-msg', function (data) {
+            console.log('Message from peer: %s', data);
+            socket.broadcast.emit('peer-msg', data);
+        });
+
+        socket.on('peer-file', function (data) {
+            console.log('File from peer: %s', data);
+            socket.broadcast.emit('peer-file', data);
+        });
+
+        socket.on('go-private', function (data) {
+            console.log("A user is going private");
+            socket.broadcast.emit('go-private', data);
+        });
+
+
+    });
+
+
+    return router;
+};

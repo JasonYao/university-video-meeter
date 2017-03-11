@@ -18,7 +18,8 @@ var User = new Schema({
     location: {type: String},
     languagePreference: {type: String},
     isAmbassador: {type: Boolean}, /* NOTE: We can't just depend on undefined ambassadorID */
-    photo: {type: String} /* We store the images in S3, and just save the link to the image here */
+    photo: {type: String}, /* We store the images in S3, and just save the link to the image here */
+    connections: [{type: Schema.Types.ObjectId, ref:'User'}] /* A list of users the user has given permission to talk to */
 });
 User.plugin(passportLocalMongoose);
 

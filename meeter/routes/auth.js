@@ -108,7 +108,8 @@ router.post('/register', function(req, res, next) {
             lastName: req.body.lastName,
             email: req.body.email,
             username: req.body.username,
-            isAmbassador: req.body.isAmbassador !== undefined
+            isAmbassador: req.body.isAmbassador !== undefined,
+            connections: []
         }), req.body.password, function(err, user) {
             if (err) {
                 var context = {};

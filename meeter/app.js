@@ -34,7 +34,7 @@ app.set('view engine', 'hbs');
 // Session setup
 var session = require('express-session');
 var sessionMiddleware = session({
-    secret: secrets.secretCookieCode, /* secret cookie thang (store this elsewhere!) */
+    secret: secrets.secretCookieCode, /* secret cookie thang (store this elsewhere!) TODO: change this into an env variable*/
     resave: true,
     saveUninitialized: true,
     cookie: {
@@ -50,7 +50,6 @@ io.use(function(socket, next) {
 
 app.use(sessionMiddleware);
 app.use(flash());
-
 
 // Auth setup (via passport)
 app.use(passport.initialize());     // passport initialize middleware

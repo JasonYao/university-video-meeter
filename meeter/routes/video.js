@@ -10,6 +10,8 @@ var Ambassador = mongoose.model('Ambassador');
 var helper = require('../helper');
 // User information gathering route handlers
 
+var users = {};
+
 // Chat
 router.get('/chat', function(req, res, next) {
     if (req.user) {
@@ -22,11 +24,19 @@ router.get('/chat', function(req, res, next) {
         context.js = ["bundle.js"];
         context.css = ["socket.css"];
 
-        // TODO remove after
-        console.log("Upon accessing /chat:");
-        console.log(req.session);
-
-        res.render('video/chat', context);
+        // TODO: Point of inefficiency, getting a list of a user's connections on every request is slow, add
+        // TODO: in a caching layer later on for speed boost
+        User.find( { _id: { $in: req.user.connections} }, function (err, connections, count) {
+            if (err) {
+                req.flash("danger", "Sorry, an error occurred when trying to find your connections list (they exist, we swear!)");
+                res.redirect('/chat');
+            }
+            else {
+                // We pass back the full connections list, and have the client-side perform an XHR to get active status
+                context.connections = connections;
+                res.render('video/chat', context);
+            }
+        });
     }
     else {
         // User is not logged in, just redirects to the login page
@@ -49,6 +59,24 @@ router.get('/schedule', function(req, res, next) {
         // User is not logged in, just redirects to the login page
         req.flash("info", "Please log in to see this page.");
         res.redirect('/login?next=schedule');
+    }
+});
+
+router.get('/api/active', function (req, res, next) {
+    if (req.query.users) {
+        // Makes sure that it's an array
+        var givenUsers = req.query.users.constructor === Array ? req.query.users : [req.query.users];
+
+        // Gets the list of active connections from the friends list
+        var activeConnectionsList = [];
+        for (var i = 0; i < givenUsers.length; ++i)
+            users[givenUsers[i]] ? activeConnectionsList.push(true) : activeConnectionsList.push(false);
+
+        res.json(activeConnectionsList);
+    }
+    else {
+        // Bad request, just sends a 400 status code back
+        res.sendStatus(400);
     }
 });
 
@@ -105,9 +133,12 @@ module.exports = function(io) {
         console.log("A user has connected to room university chat");
         console.log("Adding user with session ID: " + socket.request.sessionID + " and socket ID: " + socket.id);
 
+        // Adds it to the global list of online users
+        if (socket.request.session.passport && !users[socket.request.session.passport.user])
+            users[socket.request.session.passport.user] = {socketID: socket.id};
+
         socket.request.session.socketID = socket.id;
         socket.request.session.save();
-        console.log(socket.request.session);
 
         socket.on('upgrade', function (data) {
             console.log("A user is upgrading");
@@ -131,8 +162,12 @@ module.exports = function(io) {
 
         socket.on('disconnect', function() {
             console.log("User session ID: " + socket.request.sessionID + " disconnected");
+
+            // Removes the user form the global active connection list
+            if (socket.request.session.passport && users[socket.request.session.passport.user])
+                users[socket.request.session.passport.user] = undefined;
         });
     });
-    
+
     return router;
 };

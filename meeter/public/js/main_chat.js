@@ -108,8 +108,82 @@ function setupSocketIO() {
     });
 } // End of the setupSocketIO function
 
+function fetchUserStatuses(connectionsList, usernameList) {
+    var options = {
+        credentials: 'omit'
+    };
+
+    // We generate the url, passing in the array as a query string
+    var url = "/api/active";
+    if (usernameList.length > 0) {
+        url += "?";
+        var isFirst = true;
+        for (var i = 0; i <  usernameList.length; ++i) {
+            if (isFirst) {
+                isFirst = false;
+                url += "users=" + usernameList[i];
+            }
+            else
+                url += "&users=" + usernameList[i];
+        }
+    }
+    var request = new Request(url, options);
+
+    fetch(request)
+        .then(function (response) {
+            if (response.ok)
+                return response.json();
+            throw new Error("Network error occurred when checking connections status");
+        })
+        .then(function (statuses) {
+            for (var i = 0; i < statuses.length; ++i) {
+                if (statuses) {
+                    // User connection is online right now
+                    connectionsList[i].classList.add("connected");
+                    connectionsList[i].textContent = "ACTIVE";
+                }
+                else {
+                    // User connection is offline/ not in chat right now
+                    connectionsList[i].classList.add("disconnected");
+                    connectionsList[i].textContent = "OFFLINE";
+                }
+            }
+                connectionsList[i].classList.add(statuses ? "connected" : "disconnected");
+        })
+        .catch(function (error) {
+            console.log("There was an issue with the fetch operation: " + error.message);
+        });
+}
+
+function getUserStatusesXHR(connectionsList, usernameList) {
+
+}
+
+function checkConnectionsStatus() {
+    var connectionsCollection = document.getElementsByClassName("status"); // Returns an HTMLCollection that needs to be converted
+    var connectionsList = Array.prototype.slice.call(connectionsCollection);
+
+    // Generates the user list
+    var usernameCollection = document.getElementsByClassName("username"); // Returns an HTMLCollection that needs to be converted
+    var HTMLUserList = Array.prototype.slice.call(usernameCollection);
+    var usernameList = [];
+    for (var i = 0; i < HTMLUserList.length; ++i)
+        usernameList.push(HTMLUserList[i].textContent);
+
+    // We now get the user statuses via the fetch API, or using XHR if fetch is unavailable
+    if (self.fetch)
+        fetchUserStatuses(connectionsList, usernameList);
+    else
+        getUserStatusesXHR(connectionsList, usernameList);
+}
+
 function init() {
+    // Displays a global list of online users
+
+    // When a user is clicked, sets up socket.io room between the two
     setupSocketIO();
+
+    checkConnectionsStatus();
 
     // P2P upgraded peer connection
     // privateButton.addEventListener('click', function (e) {

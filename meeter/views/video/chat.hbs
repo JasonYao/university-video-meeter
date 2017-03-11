@@ -17,6 +17,12 @@
     <button id="private" disabled="true">Go private</button>
 </div>
 
+<h1>Your connections list:</h1>
+<ul id="connection-list">
+{{#each connections}}
+    <li><div class="username">{{this.username}}</div> | <div class="status"> Checking activity status now</div></li>
+{{/each}}
+</ul>
 
 <!-- <script src="https://cdn.socket.io/socket.io-1.4.5.js" integrity="sha384-VuaAWNnQgB7xk5ihc55oGtvAdFQP/mJ6bjNoS0Jj7hujhoKnKcPMEJrwC3bLbEP0" crossorigin="anonymous"></script>
 This is technically the correct cdn, but socket.io is down for now.

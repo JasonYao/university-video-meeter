@@ -22,6 +22,10 @@ router.get('/chat', function(req, res, next) {
         context.js = ["bundle.js"];
         context.css = ["socket.css"];
 
+        // TODO remove after
+        console.log("Upon accessing /chat:");
+        console.log(req.session);
+
         res.render('video/chat', context);
     }
     else {
@@ -98,7 +102,12 @@ module.exports = function(io) {
     // namespaced
     var room = io.of('/university_chat');
     room.on('connection', function (socket) {
-        console.log("A user has connected to room 1");
+        console.log("A user has connected to room university chat");
+        console.log("Adding user with session ID: " + socket.request.sessionID + " and socket ID: " + socket.id);
+
+        socket.request.session.socketID = socket.id;
+        socket.request.session.save();
+        console.log(socket.request.session);
 
         socket.on('upgrade', function (data) {
             console.log("A user is upgrading");
@@ -120,9 +129,10 @@ module.exports = function(io) {
             socket.broadcast.emit('go-private', data);
         });
 
-
+        socket.on('disconnect', function() {
+            console.log("User session ID: " + socket.request.sessionID + " disconnected");
+        });
     });
-
-
+    
     return router;
 };

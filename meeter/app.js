@@ -19,8 +19,6 @@ var app = express();
 var socketIO = require('socket.io');
 var io = socketIO();
 app.io = io;
-var p2p = require('socket.io-p2p-server').Server;
-app.p2p = p2p;
 
 // Routes
 var global = require('./routes/global');
@@ -35,13 +33,24 @@ app.set('view engine', 'hbs');
 
 // Session setup
 var session = require('express-session');
-var sessionOptions = {
+var sessionMiddleware = session({
     secret: secrets.secretCookieCode, /* secret cookie thang (store this elsewhere!) */
     resave: true,
-    saveUninitialized: true
-};
-app.use(session(sessionOptions));
+    saveUninitialized: true,
+    cookie: {
+        secure: app.get('env') !== 'development', // Sets to false in dev, and HTTPS-only in production automatically
+        maxAge: 600000
+    }
+});
+
+// Ties sessions into socket.io, will now be available under socket.request.session
+io.use(function(socket, next) {
+    sessionMiddleware(socket.request, socket.request.res, next);
+});
+
+app.use(sessionMiddleware);
 app.use(flash());
+
 
 // Auth setup (via passport)
 app.use(passport.initialize());     // passport initialize middleware
@@ -52,7 +61,6 @@ app.use(function(req, res, next){
     res.locals.user = req.user;
     next();
 });
-
 
 // uncomment after placing your favicon in /public
 //app.use(favicon(path.join(__dirname, 'public', 'favicon.ico')));

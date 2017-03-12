@@ -137,7 +137,8 @@ function fetchUserStatuses(connectionsList, usernameList) {
         })
         .then(function (statuses) {
             for (var i = 0; i < statuses.length; ++i) {
-                if (statuses) {
+                // NOTE: Statuses are booleans converted to strings, so we need an explicit check
+                if (statuses === "true") {
                     // User connection is online right now
                     connectionsList[i].classList.add("connected");
                     connectionsList[i].textContent = "ACTIVE";

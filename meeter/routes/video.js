@@ -10,8 +10,6 @@ var Ambassador = mongoose.model('Ambassador');
 var helper = require('../helper');
 // User information gathering route handlers
 
-var users = {};
-
 // Chat
 router.get('/chat', function(req, res, next) {
     if (req.user) {
@@ -24,17 +22,42 @@ router.get('/chat', function(req, res, next) {
         context.js = ["bundle.js"];
         context.css = ["socket.css"];
 
-        // TODO: Point of inefficiency, getting a list of a user's connections on every request is slow, add
-        // TODO: in a caching layer later on for speed boost
-        User.find( { _id: { $in: req.user.connections} }, function (err, connections, count) {
-            if (err) {
-                req.flash("danger", "Sorry, an error occurred when trying to find your connections list (they exist, we swear!)");
-                res.redirect('/chat');
+        var redis = req.app.redis;
+
+        // We only get the list if its the first time, otherwise we depend upon the cache
+        redis.get("active:" + req.user.username, function (err, value) {
+            if (err)
+                throw new Error("An error occurred when connecting to the cache: " + err.message);
+
+            if (value) {
+                // Not first time, just uses cached value
+                console.log("User was found in cache, using cached values");
+                context.connections = value;
+                res.render('video/chat', context);
             }
             else {
-                // We pass back the full connections list, and have the client-side perform an XHR to get active status
-                context.connections = connections;
-                res.render('video/chat', context);
+                console.log("User was not found in cache, hitting DB for fresh source");
+                // First time, need to find all connections
+                User.find( { _id: { $in: req.user.connections} }, function (err, connections, count) {
+                    if (err) {
+                        req.flash("danger", "Sorry, an error occurred when trying to find your connections list (they exist, we swear!)");
+                        res.redirect('/chat');
+                    }
+                    else {
+                        /*
+                        * We now have the list of connections for this user.
+                        * This'll be passed back, and the client-side will
+                        * perform an XHR to get the active status of people
+                        * TODO efficiency operation: We don't need full user objects, just username/objectID
+                        * TODO security operation: If the redis cluster is breached, emails and other private
+                        * information will be leaked. Filter out information prior to insertion into cluster.
+                        * */
+
+                        redis.set("active:" + req.user.username, connections.toString());
+                        context.connections = connections;
+                        res.render('video/chat', context);
+                    }
+                });
             }
         });
     }
@@ -64,15 +87,26 @@ router.get('/schedule', function(req, res, next) {
 
 router.get('/api/active', function (req, res, next) {
     if (req.query.users) {
+        var redis = req.app.redis;
         // Makes sure that it's an array
         var givenUsers = req.query.users.constructor === Array ? req.query.users : [req.query.users];
 
-        // Gets the list of active connections from the friends list
+        // Gets the list of connections that are online right now
         var activeConnectionsList = [];
-        for (var i = 0; i < givenUsers.length; ++i)
-            users[givenUsers[i]] ? activeConnectionsList.push(true) : activeConnectionsList.push(false);
 
-        res.json(activeConnectionsList);
+        givenUsers.forEach(function (connection) {
+            redis.get("active:" + connection, function (err, value) {
+                if (err)
+                    throw new Error("An error occurred when connecting to the cache: " + err.message);
+
+                // Adds the user to the active list if value was found in cache
+                activeConnectionsList.push(value ? true : false);
+
+                // TODO return after the .forEach is done with res.json, but only after the .forEach completes
+                if (activeConnectionsList.length === givenUsers.length)
+                    res.json(activeConnectionsList);
+            });
+        });
     }
     else {
         // Bad request, just sends a 400 status code back
@@ -133,10 +167,6 @@ module.exports = function(io) {
         console.log("A user has connected to room university chat");
         console.log("Adding user with session ID: " + socket.request.sessionID + " and socket ID: " + socket.id);
 
-        // Adds it to the global list of online users
-        if (socket.request.session.passport && !users[socket.request.session.passport.user])
-            users[socket.request.session.passport.user] = {socketID: socket.id};
-
         socket.request.session.socketID = socket.id;
         socket.request.session.save();
 
@@ -163,9 +193,9 @@ module.exports = function(io) {
         socket.on('disconnect', function() {
             console.log("User session ID: " + socket.request.sessionID + " disconnected");
 
-            // Removes the user form the global active connection list
-            if (socket.request.session.passport && users[socket.request.session.passport.user])
-                users[socket.request.session.passport.user] = undefined;
+            // Removes the socket from the current session
+            if (socket.request.session.socketID)
+                socket.request.session.socketID = undefined;
         });
     });
 

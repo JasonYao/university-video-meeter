@@ -148,7 +148,7 @@ function fetchUserStatuses(connectionsList, usernameList) {
                     connectionsList[i].textContent = "OFFLINE";
                 }
             }
-                connectionsList[i].classList.add(statuses ? "connected" : "disconnected");
+            connectionsList[i].classList.add(statuses ? "connected" : "disconnected");
         })
         .catch(function (error) {
             console.log("There was an issue with the fetch operation: " + error.message);

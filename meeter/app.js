@@ -31,9 +31,16 @@ var video = require('./routes/video')(io);
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
-// Session setup
+// Session setup + redis for session management
 var session = require('express-session');
+var RedisStore = require('connect-redis')(session);
+var redis   = require("redis");
+var client  = redis.createClient();
+app.redis = client;
+
 var sessionMiddleware = session({
+    // TODO change to env variable
+    store: new RedisStore({ host: secrets.redisHost, port: secrets.redisPort, client: client, ttl :  260}),
     secret: secrets.secretCookieCode, /* secret cookie thang (store this elsewhere!) TODO: change this into an env variable*/
     resave: true,
     saveUninitialized: true,

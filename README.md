@@ -32,6 +32,7 @@ as we could fit into it.
 - [WebRTC](https://webrtc.org/) via [simple-peer](https://github.com/feross/simple-peer)* (P2P real-time video, chat, and calling)
 - [Socket.io](http://socket.io/) (Signaling of metadata and information, and fallback if WebRTC is unavailable)
 - AJAX via [fetch() API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) (bleeding-edge), and [XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) (fallback)
+- [Redis](https://redis.io/) (caching)
 
 \* Note: While socket.io has a [P2P library](https://github.com/socketio/socket.io-p2p),
 its current state leaves it unable to do the one

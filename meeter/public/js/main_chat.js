@@ -179,8 +179,6 @@ function checkConnectionsStatus() {
 }
 
 function init() {
-    // Displays a global list of online users
-
     // When a user is clicked, sets up socket.io room between the two
     setupSocketIO();
 

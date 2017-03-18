@@ -1,34 +1,5 @@
+"use strict";
 // Helper functions
-
-// Note: we need to parse this via a function
-// because if a malicious user did ?next=something_bad,
-// it'd be bad.
-function getNext(query) {
-    if (query === undefined || query.next === undefined)
-        return undefined;
-
-    switch (query.next) {
-        case "profile":
-            return "/profile";
-        case "dashboard":
-            return "/dashboard";
-        case "settings":
-            return "/settings";
-        case "ambassador":
-            return "/ambassador";
-        case "optional":
-            return "/optional";
-        case "chat":
-            return "/chat";
-        case "search":
-            return "/search";
-        case "schedule":
-            return "/schedule";
-        default:
-            return undefined;
-    }
-} // End of the getNext function
-
 
 function getFlashMessages(req) {
     var messages = [];
@@ -57,10 +28,19 @@ function getFlashMessages(req) {
     return messages;
 } // End of the getFlashMessages function
 
+// Middleware to check that the user is already logged in
+function isAuthenticated(req, res, next) {
+    req.session.redirect_to = req.path;
+    if (req.isAuthenticated())
+        return next();
+    else
+        res.redirect('/login');
+} // End of the isAuthenticated function
+
 /**
  * Functions that are enabled to be exported for use in other files
  */
 module.exports = {
-    getNext: getNext,
-    getFlashMessages: getFlashMessages
+    getFlashMessages: getFlashMessages,
+    isAuthenticated: isAuthenticated
 };

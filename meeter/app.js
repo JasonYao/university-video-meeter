@@ -20,13 +20,6 @@ var socketIO = require('socket.io');
 var io = socketIO();
 app.io = io;
 
-// Routes
-var global = require('./routes/global');
-var users = require('./routes/users');
-var auth = require('./routes/auth');
-var info = require('./routes/info');
-var video = require('./routes/video')(io);
-
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
@@ -77,6 +70,13 @@ app.use(bodyParser.json({limit: '4mb'}));
 app.use(bodyParser.urlencoded({ extended: true, limit: '4mb' }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+
+// Routes
+var global = require('./routes/global');
+var users = require('./routes/users');
+var auth = require('./routes/auth');
+var info = require('./routes/info');
+var video = require('./routes/video')(io, app);
 
 // Active routes with name-spacing
 app.use('/', global);

@@ -15,11 +15,7 @@ router.get('/login', function(req, res, next) {
     if (req.user) {
         // User is already logged in
         req.flash("info", "You've already logged in!");
-        var nextLink = helper.getNext(req.query);
-        if (nextLink)
-            res.redirect(nextLink);
-        else
-            res.redirect('/dashboard');
+        res.redirect('/dashboard');
     }
     else {
         // User has not logged in yet
@@ -31,51 +27,30 @@ router.get('/login', function(req, res, next) {
     }
 });
 
-router.post('/login', function(req,res,next) {
-    if(req.user) {
-        // User has already logged in, just redirects to the dashboard
-        req.flash("info", "You've already logged in!");
-        var nextLink = helper.getNext(req.query);
-        if (nextLink)
-            res.redirect(nextLink);
-        else
-            res.redirect('/dashboard');
-    }
-    else {
-        // User has not logged in yet, so attempts login
-        var context = {};
-        context.title = "Login";
-        context.active = { login: true };
+router.post('/login', function (req, res, next) {
+    passport.authenticate('local', function (err, user, info) {
+        if (err)
+            return next(err);
+        if (!user) {
+            var context = {};
+            context.title = "Login";
+            context.active = { login: true };
+            context.username = req.body.username;
 
-        passport.authenticate('local', function(err, user) {
-            if (err) {
-                // Login somehow catastrophically failed
-                req.flash("danger", err.message);
-                context.messages = helper.getFlashMessages(req);
-                context.username = req.body.username;
-                res.render('auth/login', context);
-            }
-            else if (!user) {
-                // User's login information was incorrect
-                req.flash("danger", "Your username/password combination was incorrect.");
-                context.messages = helper.getFlashMessages(req);
-                context.username = req.body.username;
-                res.render('auth/login', context);
-            }
-            else {
-                // No errors, runs through login procedure
-                req.logIn(user, function(err) {
-                    if (err) { return next(err); }
+            req.flash('warning', 'Your username/password combination was not found');
+            context.messages = helper.getFlashMessages(req);
 
-                    var nextLink = helper.getNext(req.query);
-                    if (nextLink)
-                        res.redirect(nextLink);
-                    else
-                        res.redirect('/dashboard');
-                });
-            }
-        })(req, res, next);
-    }
+            res.render('auth/login', context);
+        }
+        req.logIn(user, function(err) {
+            if (err)
+                return next(err);
+
+            var redirect = req.session.redirect_to || '/dashboard';
+            req.session.redirect_to = undefined;
+            return res.redirect(redirect);
+        });
+    })(req, res, next);
 });
 
 // Register page
@@ -130,9 +105,19 @@ router.post('/register', function(req, res, next) {
 });
 
 // Logout page
-router.get('/logout', function(req, res, next){
-    req.logout();
-    res.redirect('/');
+router.get('/logout', function(req, res, next) {
+    if (req.user) {
+        var redis = req.app.redis;
+        redis.del("active:" + req.user.username, function (err, reply) {
+            req.session.destroy();
+            req.logout();
+            res.redirect('/');
+        });
+    }
+    else {
+        req.flash("warning", "You need to login first to logout!");
+        res.redirect('/');
+    }
 });
 
 // Password reset page

@@ -31,6 +31,7 @@ router.post('/login', function (req, res, next) {
     passport.authenticate('local', function (err, user, info) {
         if (err)
             return next(err);
+
         if (!user) {
             var context = {};
             context.title = "Login";
@@ -42,14 +43,16 @@ router.post('/login', function (req, res, next) {
 
             res.render('auth/login', context);
         }
-        req.logIn(user, function(err) {
-            if (err)
-                return next(err);
+        else {
+            req.logIn(user, function(err) {
+                if (err)
+                    return next(err);
 
-            var redirect = req.session.redirect_to || '/dashboard';
-            req.session.redirect_to = undefined;
-            return res.redirect(redirect);
-        });
+                var redirect = req.session.redirect_to || '/dashboard';
+                req.session.redirect_to = undefined;
+                return res.redirect(redirect);
+            });
+        }
     })(req, res, next);
 });
 

@@ -1,11 +1,11 @@
 "use strict";
-var assert = require('assert');
+const assert = require('assert');
 
 const express = require('express');
 const request = require('supertest');
-var app = 'http://localhost:3000';
+const app = 'http://localhost:3000';
 
-var helper = require('./helper');
+const helper = require('./helper');
 
 // Login testing
 describe('Authentication: Login', function() {
@@ -23,7 +23,7 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"))
+                    assert(res.text.includes("alert-warning"))
                 });
         });
     });
@@ -39,7 +39,7 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"))
+                    assert(res.text.includes("alert-warning"))
                 });
         });
     });
@@ -54,7 +54,7 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"))
+                    assert(res.text.includes("alert-warning"))
                 });
         });
     });
@@ -70,7 +70,7 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"));
+                    assert(res.text.includes("alert-warning"));
                     assert(res.text.includes("value=\"testing\""));
                 });
         });
@@ -86,7 +86,7 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"));
+                    assert(res.text.includes("alert-warning"));
                     assert(res.text.includes("value=\"testing\""));
                 });
         });
@@ -102,7 +102,7 @@ describe('Authentication: Login', function() {
                 })
                 .expect(200)
                 .then(res => {
-                    assert(res.text.includes("alert-danger"));
+                    assert(res.text.includes("alert-warning"));
                     assert(res.text.includes("value=\"testing\""));
                 });
         });

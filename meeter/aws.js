@@ -1,8 +1,8 @@
 // Required AWS settings
-var AWS = require('aws-sdk');
-var s3 = new AWS.S3();
-var fs = require('fs');                             // Used in reading local file once uploaded
-var secrets = require('./secrets');                 // Reads in secret keys
+const AWS = require('aws-sdk');
+const s3 = new AWS.S3();
+const fs = require('fs');                             // Used in reading local file once uploaded
+const secrets = require('./secrets');                 // Reads in secret keys
 
 AWS.config.update({
     region: secrets.region,
@@ -60,7 +60,6 @@ function uploadToS3(file, callback) {
 } // End of the uploadToS3 function
 
 // Place this inside routers using uploadToS3 function:
-
 /*
 var multer  = require('multer');                    // Used for multi-part file uploading
 var upload = multer({ dest: 'img/uploads/' });      // Used for multi-part file uploading
@@ -83,10 +82,6 @@ var aws = require('../aws');
  }
  });
  });*/
-
-
-
-
 
 /**
  * Functions that are enabled to be exported for use in other files

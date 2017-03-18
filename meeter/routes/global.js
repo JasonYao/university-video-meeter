@@ -1,16 +1,21 @@
 "use strict";
-var express = require('express');
-var router = express.Router();
-var helper = require('../helper');
+const express = require('express');
+const router = express.Router();
+const helper = require('../helper');
 
 // Home page
 router.get('/', function(req, res, next) {
-    var context = {};
-    context.messages = helper.getFlashMessages(req);
-    context.title = "Home";
-    context.active = { home: true };
+    if (req.user)
+        res.redirect('/dashboard');
+    else {
+        var context = {};
+        context.messages = helper.getFlashMessages(req);
 
-    res.render('global/index', context);
+        context.title = "Home";
+        context.active = { home: true };
+
+        res.render('global/index', context);
+    }
 });
 
 // About page

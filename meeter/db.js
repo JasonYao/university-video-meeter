@@ -1,11 +1,11 @@
 "use strict";
-var mongoose = require('mongoose'),
+const mongoose = require('mongoose'),
     Schema = mongoose.Schema,
     passportLocalMongoose = require('passport-local-mongoose'),
     URLSlugs = require('mongoose-url-slugs');
 require('mongoose-type-email');
 
-var secrets = require('./secrets');
+const secrets = require('./secrets');
 
 // First we deal with a normal user of the site
 var User = new Schema({

@@ -1,13 +1,13 @@
 "use strict";
-var express = require('express');
-var router = express.Router();
+const express = require('express');
+const router = express.Router();
 
-var passport = require('passport');
-var mongoose = require('mongoose');
-var User = mongoose.model('User');
-var Ambassador = mongoose.model('Ambassador');
+const passport = require('passport');
+const mongoose = require('mongoose');
+const User = mongoose.model('User');
+const Ambassador = mongoose.model('Ambassador');
 
-var helper = require('../helper');
+const helper = require('../helper');
 // User information gathering route handlers
 
 // Optional user information

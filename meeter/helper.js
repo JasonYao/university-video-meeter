@@ -9,7 +9,6 @@ function getFlashMessages(req) {
     for (var i = 0; i < success.length; ++i)
         messages.push({alertType: "success", message: success[i]});
 
-
     // Deals with info messages
     var info = req.flash('info');
     for (i = 0; i < info.length; ++i)
@@ -33,8 +32,10 @@ function isAuthenticated(req, res, next) {
     req.session.redirect_to = req.path;
     if (req.isAuthenticated())
         return next();
-    else
+    else {
+        req.flash('info', 'Please log in to access this page.');
         res.redirect('/login');
+    }
 } // End of the isAuthenticated function
 
 /**

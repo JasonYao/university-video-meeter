@@ -1,23 +1,23 @@
 "use strict";
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var cookieParser = require('cookie-parser');
-var bodyParser = require('body-parser');
-var flash = require('connect-flash');
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const cookieParser = require('cookie-parser');
+const bodyParser = require('body-parser');
+const flash = require('connect-flash');
 
 // Auth and db requirements
-var passport = require('passport');
+const passport = require('passport');
 require('./db');
 require('./auth');
-var secrets = require('./secrets');
+const secrets = require('./secrets');
 
-var app = express();
+const app = express();
 
 // Socket.io setup
-var socketIO = require('socket.io');
-var io = socketIO();
+const socketIO = require('socket.io');
+const io = socketIO();
 app.io = io;
 
 // view engine setup
@@ -25,13 +25,13 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'hbs');
 
 // Session setup + redis for session management
-var session = require('express-session');
-var RedisStore = require('connect-redis')(session);
-var redis   = require("redis");
-var client  = redis.createClient();
+const session = require('express-session');
+const RedisStore = require('connect-redis')(session);
+const redis   = require("redis");
+const client  = redis.createClient();
 app.redis = client;
 
-var sessionMiddleware = session({
+const sessionMiddleware = session({
     // TODO change to env variable
     store: new RedisStore({ host: secrets.redisHost, port: secrets.redisPort, client: client, ttl :  260}),
     secret: secrets.secretCookieCode, /* secret cookie thang (store this elsewhere!) TODO: change this into an env variable*/
@@ -72,11 +72,11 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
 // Routes
-var global = require('./routes/global');
-var users = require('./routes/users');
-var auth = require('./routes/auth');
-var info = require('./routes/info');
-var video = require('./routes/video')(io, app);
+const global = require('./routes/global');
+const users = require('./routes/users');
+const auth = require('./routes/auth');
+const info = require('./routes/info');
+const video = require('./routes/video')(io, app);
 
 // Active routes with name-spacing
 app.use('/', global);

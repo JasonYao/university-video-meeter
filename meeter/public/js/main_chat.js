@@ -109,24 +109,26 @@ function setupSocketIO() {
 } // End of the setupSocketIO function
 
 function fetchUserStatuses(connectionsList, usernameList) {
+    // Sanity check
+    if (usernameList.length === 0)
+        return;
+
     var options = {
         credentials: 'omit'
     };
 
     // We generate the url, passing in the array as a query string
-    var url = "/api/active";
-    if (usernameList.length > 0) {
-        url += "?";
-        var isFirst = true;
-        for (var i = 0; i <  usernameList.length; ++i) {
-            if (isFirst) {
-                isFirst = false;
-                url += "users=" + usernameList[i];
-            }
-            else
-                url += "&users=" + usernameList[i];
+    var url = "/api/active?";
+    var isFirst = true;
+    for (var i = 0; i <  usernameList.length; ++i) {
+        if (isFirst) {
+            isFirst = false;
+            url += "users=" + usernameList[i];
         }
+        else
+            url += "&users=" + usernameList[i];
     }
+
     var request = new Request(url, options);
 
     fetch(request)
@@ -157,7 +159,7 @@ function fetchUserStatuses(connectionsList, usernameList) {
 }
 
 function getUserStatusesXHR(connectionsList, usernameList) {
-
+    // TODO implement
 }
 
 function checkConnectionsStatus() {

@@ -10,10 +10,8 @@ router.get('/', function(req, res, next) {
     else {
         var context = {};
         context.messages = helper.getFlashMessages(req);
-
         context.title = "Home";
         context.active = { home: true };
-
         res.render('global/index', context);
     }
 });

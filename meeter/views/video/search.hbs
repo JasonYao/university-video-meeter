@@ -1,2 +1,16 @@
 <h1>Meeteer | {{title}}</h1>
 <p>Welcome to the search page</p>
+
+<div class="grid">
+    {{#each users}}
+        <div class="user">
+            <img src="{{this.photo}}" />
+            <p>Name: {{this.firstName}} {{this.lastName}}</p>
+            <p>Location: {{this.location}}</p>
+            <p>Bio:<br>{{this.bio}}</p>
+            <p class="{{#if this.isAmbassador}}connected{{else}}disconnected{{/if}}">Ambassador: {{#if this.isAmbassador}}YES{{else}}NO{{/if}}</p>
+
+            <button class="invite-request">Request Connection</button>
+        </div>
+    {{/each}}
+</div>

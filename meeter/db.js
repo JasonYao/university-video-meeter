@@ -41,5 +41,8 @@ User.plugin(URLSlugs('username'));
 mongoose.model('User', User);
 mongoose.model('Ambassador', Ambassador);
 
+// Sets mongoose to use ES6 native promises
+mongoose.Promise = global.Promise;
+
 // db connection after all schemas are registered
 mongoose.connect(secrets.dbConnectionString);

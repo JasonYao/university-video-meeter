@@ -33,6 +33,7 @@ as we could fit into it.
 - [Socket.io](http://socket.io/) (Signaling of metadata and information, and fallback if WebRTC is unavailable)
 - AJAX via [fetch() API](https://developer.mozilla.org/en-US/docs/Web/API/Fetch_API/Using_Fetch) (bleeding-edge), and [XHR](https://developer.mozilla.org/en-US/docs/Web/API/XMLHttpRequest) (fallback)
 - [Redis](https://redis.io/) (caching)
+- [VueJS v2](https://vuejs.org/) (reactive front-end)
 
 \* Note: While socket.io has a [P2P library](https://github.com/socketio/socket.io-p2p),
 its current state leaves it unable to do the one
@@ -75,4 +76,5 @@ Reverse Proxy Server: Nginx
 Node Process Manager: PM2
 Database:             MongoDB
 ODM:                  Mongoose
+Front-end:            VueJS
 ```

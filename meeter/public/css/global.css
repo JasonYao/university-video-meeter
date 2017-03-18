@@ -1,0 +1,10 @@
+/**
+ * Connection status
+ */
+.connected {
+    color: green;
+}
+
+.disconnected {
+    color: red;
+}

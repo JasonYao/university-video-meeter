@@ -38,30 +38,31 @@ router.get('/chat', helper.isAuthenticated, function(req, res, next) {
         }
         else {
             console.log("User was not found in cache, hitting DB for fresh source");
-            // First time, need to find all connections
-            User.find( { _id: { $in: req.user.connections} }, function (err, connections, count) {
-                if (err) {
+            var findPriorConnectionsPromise = User.find({ _id: { $in: req.user.connections} }).exec();
+            findPriorConnectionsPromise
+                .then(function (connections) {
+                    /**
+                     * We pass back the list of connections, and the client-side
+                     * will fetch the activity status of people based on the cache.
+                     * In case of redis breach/leak/better efficiency, no full user
+                     * objects are stored, only username/objectID mappings.
+                     *
+                     * NOTE: We need to serialise the connections list into a string for redis to handle,
+                     * as there isn't any native support for storing full JS objects directly.
+                     * Ref: https://stackoverflow.com/questions/16375188/redis-strings-vs-redis-hashes-to-represent-json-efficiency
+                     */
+
+                    var extractedConnections = connections.map(connection => connection.username);
+                    redis.set("active:" + req.user.username, JSON.stringify(extractedConnections));
+
+                    context.connections = extractedConnections;
+                    res.render('video/chat', context);
+                })
+                .catch(function (err) {
+                    console.log(err);
                     req.flash("danger", "Sorry, an error occurred when trying to find your connections list (they exist, we swear!)");
                     res.redirect('/chat');
-                }
-                else {
-                    /*
-                     * We now have the list of connections for this user.
-                     * This'll be passed back, and the client-side will
-                     * perform an XHR to get the active status of people
-                     * TODO efficiency operation: We don't need full user objects, just username/objectID
-                     * TODO security operation: If the redis cluster is breached, emails and other private
-                     * information will be leaked. Filter out information prior to insertion into cluster.
-                     * */
-
-                    // NOTE: We need to serialise the connections list into a string for redis to handle,
-                    // as there isn't any native support for storing full JS objects directly.
-                    // Ref: https://stackoverflow.com/questions/16375188/redis-strings-vs-redis-hashes-to-represent-json-efficiency
-                    redis.set("active:" + req.user.username, JSON.stringify(connections));
-                    context.connections = connections;
-                    res.render('video/chat', context);
-                }
-            });
+                });
         }
     });
 });
@@ -78,6 +79,7 @@ router.get('/schedule', helper.isAuthenticated, function(req, res, next) {
 
 router.get('/api/active', function (req, res, next) {
     if (req.query.users) {
+        console.log("API: Active has been correctly hit");
         var redis = req.app.redis;
         // Makes sure that it's an array
         var givenUsers = req.query.users.constructor === Array ? req.query.users : [req.query.users];
@@ -93,13 +95,15 @@ router.get('/api/active', function (req, res, next) {
                 // Adds the user to the active list if value was found in cache
                 activeConnectionsList.push(value ? true : false);
 
-                // TODO return after the .forEach is done with res.json, but only after the .forEach completes
+                // TODO Use promise for more elegant way to return after the
+                // TODO .forEach is done with res.json, but only after the .forEach completes
                 if (activeConnectionsList.length === givenUsers.length)
                     res.json(activeConnectionsList);
             });
         });
     }
     else {
+        console.log("API: Active has been incorrectly hit");
         // Bad request, just sends a 400 status code back
         res.sendStatus(400);
     }
@@ -112,7 +116,39 @@ router.get('/search', helper.isAuthenticated, function(req, res, next) {
     context.messages = helper.getFlashMessages(req);
     context.title = "Search";
     context.active = { search: true };
-    res.render('video/search', context);
+
+    // Filters out prior connections and self
+    var findPriorConnectionsPromise = User.find({ _id: { $in: req.user.connections} }).exec();
+
+    var priorConnectionsSet = new Set();
+    var filteredUsers = [];
+
+    findPriorConnectionsPromise
+        .then(function (priorConnections) {
+            priorConnections.forEach(function (priorConnection) {
+                // NOTE: Type coercion has to occur here, where we explicitly call .toString, otherwise it doesn't work
+                priorConnectionsSet.add(priorConnection._id.toString());
+            });
+
+            return User.find({}).exec();
+        })
+        .then(function (users) {
+            users.forEach(function (user) {
+                // NOTE: Type coercion has to occur here, where we explicitly call .toString, otherwise it doesn't work
+                if (user._id.toString() !== req.user._id.toString() && !priorConnectionsSet.has(user._id.toString()))
+                    filteredUsers.push(user);
+            });
+        })
+        .then(function () {
+            context.users = filteredUsers;
+            context.js = ['search.js'];
+            res.render('video/search', context);
+        })
+        .catch(function (err) {
+            console.log(err);
+            req.flash("danger", "Whoops, looks like there was an error connecting to our internal services - please try again in a little bit");
+            res.redirect('/search');
+        });
 });
 
 module.exports = function(io, app) {
@@ -180,16 +216,14 @@ module.exports = function(io, app) {
         socket.on('disconnect', function() {
             console.log("User session ID: " + socket.request.sessionID + " disconnected");
             console.log("Disconnecting user's socketID: " + socket.request.session.socketID);
-            console.log(socket.request);
-            // Our goal here is to use redis.del("sess:" + socket.request.sessionID);
 
             var redis = app.redis;
             console.log("Deleting from cache socket sessionID: " + "\"sess:" + socket.request.sessionID + "\"");
             redis.keys('*', function (err, keys) {
-                console.log(err, keys);
-                redis.del("sess:" + socket.request.sessionID);
+                // console.log(err, keys);
+                // redis.del("sess:" + socket.request.sessionID);
                 redis.keys('*', function (err2, keys2) {
-                    console.log(err2, keys2);
+                    // console.log(err2, keys2);
                     socket.request.session.socketID = undefined;
                     console.log("Disconnecting user's socketID: " + socket.request.session.socketID);
                 });
